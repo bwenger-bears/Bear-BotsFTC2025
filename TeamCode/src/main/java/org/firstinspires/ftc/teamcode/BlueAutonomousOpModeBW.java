@@ -34,26 +34,38 @@ public class BlueAutonomousOpModeBW extends LinearOpMode {
         limelight.start();
 
         waitForStart();
-        intake();
-        launch();
-        //launchMotors.liftBot(2000, 0.5);
-        //drive.driveForward(-500, -0.5);
-        //sleep(1000);
-        //turnUsingCamera(0);
-        //close stopper servo to prevent immediate launch
-        //launchServos.setStopperServo(90);
-        //Launch first volley of balls
-        //launch();
 
-        //acquire and turn to closet green ball
-        //turnUsingCamera(9);
+        //------------autonomous action items-add code below the comment-----------------------------
 
-        //activate uptake motors and move drive to ball.
-        //launchMotors.setIntakeSpeed(1000);
-        //drive.driveForward(2000, 0.5);
-        //drive.driveForward(-2000, -0.5);
+        // 1. Shift camera pipline (April Tag) to Move to launch point
 
-        //turnUsingCamera(0);
+
+
+        // 2. turn using camera to line up launch
+
+
+        // 3. Spin up launch motors and launch 3 balls then change camera pipeline 0
+
+
+
+        // 4. TurnUsingCamara and line up closet green ball
+
+
+
+        // 5. Spin up intake and then drive into balls
+
+
+
+        // 6. Switch to camera pipeline 9 and drive backwards to launch zone and then turn to face target
+
+
+        // 7.  Spin up launch motor and launch at target
+
+
+
+        // 8.  Time permitting, lather, rinse, and repeat
+
+
 
     }
 
