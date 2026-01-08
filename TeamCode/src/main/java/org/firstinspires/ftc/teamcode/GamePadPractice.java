@@ -1,4 +1,6 @@
+/*
 package org.firstinspires.ftc.teamcode;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -19,3 +21,4 @@ public class GamePadPractice extends OpMode {
         telemetry.addData("a-button", gamepad1.a);
     }
 }
+*/

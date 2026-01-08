@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode;
+/*package org.firstinspires.ftc.teamcode;
+
 
 public class RobotLocationPractice {
 
@@ -39,7 +40,8 @@ public class RobotLocationPractice {
     }
 
     public double changeX(double changeAmount) {
-        x += changeAmount
+        x += changeAmount;
+        return x;
     }
     public void setX(double x) {
         this.x = x;
@@ -50,7 +52,8 @@ public class RobotLocationPractice {
         return this.x;
     }
     public double changeY(double changeAmount) {
-        y += changeAmount
+        y += changeAmount;
+        return y;
     }
     public void setY(double y) {
         this.y = y;
@@ -60,4 +63,4 @@ public class RobotLocationPractice {
     public double getY() {
         return this.y;
     }
-}
+}*/
