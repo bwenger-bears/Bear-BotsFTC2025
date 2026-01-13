@@ -37,8 +37,8 @@ public class BlueAutonomousOpModeBW extends LinearOpMode {
 
         //------------autonomous action items-add code below the comment-----------------------------
 
-        // 1. Shift camera pipline (April Tag) to Move to launch point
-
+        // 1. Move to launch point
+        drive.driveForward(1000, 0.5);
 
 
         // 2. turn using camera to line up launch
@@ -49,7 +49,7 @@ public class BlueAutonomousOpModeBW extends LinearOpMode {
 
 
         // 4. TurnUsingCamara and line up closet green ball
-
+        turnUsingCamera(1);//pipeline 1= purple ball
 
 
         // 5. Spin up intake and then drive into balls
