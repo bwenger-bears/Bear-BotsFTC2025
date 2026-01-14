@@ -17,8 +17,8 @@ public class BlueAutonomousOpModeBW extends LinearOpMode {
     LaunchServos launchServos = new LaunchServos();
     Limelight3A limelight;
 
-    private double Kp = 0.02;   //proportional constant for turn control
-    private double minTurnPower = 0.05; //overcomes friction
+    private double Kp = 0.1;   //proportional constant for turn control
+    private double minTurnPower = 0.06; //overcomes friction
     private double lastTime = 0;
     private double tx;          //degree error from target object
     private double lastTx = 0;
@@ -35,32 +35,35 @@ public class BlueAutonomousOpModeBW extends LinearOpMode {
 
         waitForStart();
 
+        //drive.turn(90,0.05);
         //------------autonomous action items-add code below the comment-----------------------------
 
         // 1. Move to launch point
-        drive.driveForward(1000, 0.5);
+        drive.driveForward(2400, 0.5);
 
 
         // 2. turn using camera to line up launch
 
 
-        // 3. Spin up launch motors and launch 3 balls then change camera pipeline 0
-
+        // 3. Spin up launch motors and launch 3 balls
+        //launch();
 
 
         // 4. TurnUsingCamara and line up closet green ball
-        turnUsingCamera(1);//pipeline 1= purple ball
-
+        //turnUsingCamera(8);//pipeline 8= purple ball
+        drive.turn(-30,0.5);
 
         // 5. Spin up intake and then drive into balls
+        //intake():
+        drive.driveForward(1000,0.5);
 
-
-
-        // 6. Switch to camera pipeline 9 and drive backwards to launch zone and then turn to face target
+        // 6. drive backwards to launch zone and then turn to face target (pipeline 0)
+        drive.driveForward(-1000,-0.5);
+        //turnUsingCamera(0);
 
 
         // 7.  Spin up launch motor and launch at target
-
+        //launch();
 
 
         // 8.  Time permitting, lather, rinse, and repeat
@@ -91,50 +94,58 @@ public class BlueAutonomousOpModeBW extends LinearOpMode {
     }
     //acquire and turn towards balls or april tags
     public void turnUsingCamera (int pipeline) {
-        lastTx = 0;
-        limelight.pipelineSwitch(pipeline); //pipeline 0 = blue base, 1 = red base, 8 = purple ball, 9 = green ball
-        sleep(2000);
-        while (opModeIsActive()) {
 
-            LLResult result = limelight.getLatestResult();
+            limelight.pipelineSwitch(pipeline);
+            sleep(500); // Reduced sleep; 2 seconds is a long time in Auto!
 
-        // --------------Validity check---------------
-            if (result != null && result.isValid()) {
-                tx = limelight.getLatestResult().getTx(); // Horizontal Offset
+            int settledFrames = 0; // Tracks how long we've been on target
 
-            // Calculate power based on Proportional Gain
-                double turnPower = Kp * tx;
+            while (opModeIsActive()) {
+                LLResult result = limelight.getLatestResult();
 
-            // --- 3. MIN POWER AND DIRECTION ---
-                if (Math.abs(turnPower) < minTurnPower && Math.abs(tx) > 1.0) {
-                // Only apply min power if error is still large (to start moving)
-                    turnPower += Math.copySign(minTurnPower, turnPower);
-                } else if (Math.abs(turnPower) > 1.0) {
-                // Cap power at 1.0
-                    turnPower = Math.copySign(1.0, turnPower);
-                }
-            //pass turnPower to to our drive motors.
-                drive.cameraTurn(turnPower);
+                if (result != null && result.isValid()) {
+                    tx = result.getTx(); // Horizontal Offset
 
-            // --- 4. TELEMETRY & UPDATE STATE ---
-                telemetry.addData("Status", "Target Locked");
-                telemetry.addData("Error (tx)", "%.2f", tx);
-                telemetry.addData("Total Power", "%.2f", turnPower);
+                    // 1. Calculate base Proportional power
+                    double turnPower = tx * Kp;
 
-            // --- 5. STOP CONDITION ---
-                if (Math.abs(tx) < 1.0 && Math.abs(tx - lastTx) < 0.5) {
-                // Stop when centered AND the error is not changing quickly (settled)
-                    drive.stopDrive();
-                    telemetry.addData("Goal", "Reached & Settled");
+                    // 2. Apply Minimum Power to overcome friction
+                    // Only apply if we aren't "close enough" yet
+                    if (Math.abs(tx) > 1.0) {
+                        if (Math.abs(turnPower) < minTurnPower) {
+                            turnPower = Math.copySign(minTurnPower, turnPower);
+                        }
+                    } else {
+                        turnPower = 0; // Close enough, stop motors
+                    }
+
+                    // 3. Cap max power for safety/stability
+                    turnPower = Math.max(-0.4, Math.min(0.4, turnPower));
+
+                    drive.cameraTurn(turnPower);
+
+                    // 4. STOP CONDITION: Must be within 1 degree for 5 consecutive frames
+                    if (Math.abs(tx) < 1.0) {
+                        settledFrames++;
+                    } else {
+                        settledFrames = 0;
+                    }
+
+                    if (settledFrames > 5) {
+                        drive.stopDrive();
+                        break;
+                    }
+
+                    telemetry.addData("Target", "Locked");
+                    telemetry.addData("TX", tx);
                     telemetry.update();
-                    break;
+
+                } else {
+                    // Target lost: Stop motors so we don't spin wildly
+                    drive.stopDrive();
+                    telemetry.addData("Target", "LOST");
+                    telemetry.update();
                 }
-            } else {
-                telemetry.addData("Status", "No Target Detected");
-                drive.stopDrive();
             }
-            lastTx = tx;
-            telemetry.update();
         }
     }
-}
