@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
 public class MacanumFieldOrientatedOpModeAB extends OpMode{
-    MecanumDrive drive = new MecanumDrive();
+    MecanumDriveAB drive = new MecanumDriveAB();
 
     Limelight3A limelight;
 
